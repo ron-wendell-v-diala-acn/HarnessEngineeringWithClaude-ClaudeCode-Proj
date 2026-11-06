@@ -9,7 +9,6 @@ Every answer cites at least one artifact from own runs.
 
 - Model(s): Claude Haiku 4.5 (claude-haiku-4-5-20251001)
 - OS / Python: Linux 4.19.0-gvisor, Python 3.10.14
-- Approx. API spend: $0 (recorded responses, offline execution)
 
 ---
 
