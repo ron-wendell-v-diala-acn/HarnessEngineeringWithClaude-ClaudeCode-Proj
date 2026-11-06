@@ -1,0 +1,3 @@
+FAIL (2 problems):
+  - .claude/commands/review.md missing
+  - .claude/skills/deploy-check/SKILL.md missing
