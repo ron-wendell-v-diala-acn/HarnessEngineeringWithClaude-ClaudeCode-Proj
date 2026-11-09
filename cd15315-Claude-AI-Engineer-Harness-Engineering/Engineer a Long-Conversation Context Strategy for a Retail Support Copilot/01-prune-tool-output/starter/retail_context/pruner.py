@@ -30,7 +30,13 @@ from __future__ import annotations
 # The 5 fields: order_id, order_date, order_total_usd, fulfillment_status,
 # return_eligible_until — chosen because they are the *only* fields needed for
 # the agent's return/refund decision.
-KEPT_FIELDS: tuple[str, ...] = ()
+KEPT_FIELDS: tuple[str, ...] = (
+    "order_id",
+    "order_date",
+    "order_total_usd",
+    "fulfillment_status",
+    "return_eligible_until",
+)
 
 
 class PrunerMissingFieldError(KeyError):
@@ -38,18 +44,11 @@ class PrunerMissingFieldError(KeyError):
 
 
 def prune_lookup_order(raw: dict) -> dict:
-    # TODO (Exercise 1): Implement deterministic field selection.
-    #
-    # 1. Check that every name in KEPT_FIELDS is present as a key in `raw`.
-    #    If any are missing, raise PrunerMissingFieldError with a message
-    #    that lists the missing field names — the agent needs to *notice*
-    #    the upstream tool returned an incomplete record, not silently
-    #    propagate it.
-    #
-    # 2. Return a new dict containing exactly the KEPT_FIELDS, in their
-    #    declaration order. (Preserving the order is part of the contract;
-    #    tests/test_pruner.py asserts on it.)
-    #
-    # Do NOT add an `anthropic` import here — the pruner is deterministic by
-    # design. The AST audit will flag any LLM-driven implementation.
-    raise NotImplementedError("Exercise 1: implement deterministic 5-field pruning")
+    """Prune lookup_order response to exactly 5 decision-bearing fields."""
+    # Check that every name in KEPT_FIELDS is present as a key in `raw`
+    missing = [field for field in KEPT_FIELDS if field not in raw]
+    if missing:
+        raise PrunerMissingFieldError(f"Missing required fields: {missing}")
+    
+    # Return a new dict containing exactly the KEPT_FIELDS, in their declaration order
+    return {field: raw[field] for field in KEPT_FIELDS}

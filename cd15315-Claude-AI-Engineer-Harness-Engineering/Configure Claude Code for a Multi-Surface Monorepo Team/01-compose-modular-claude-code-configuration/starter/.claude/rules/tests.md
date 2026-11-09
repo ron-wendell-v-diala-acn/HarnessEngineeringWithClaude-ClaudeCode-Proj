@@ -1,18 +1,14 @@
 ---
-description: TODO write a one-line description of these rules
+name: tests
 paths:
-  # TODO: add glob(s) that activate this rule for co-located test files anywhere in
-  # the tree. Tests are co-located: Foo.tsx lives next to Foo.test.tsx — so the glob
-  # needs to cross-cut both the components tree and the API tree.
-  - "TODO/**/*"
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
 ---
 
 # Test file rules
 
-<!--
-TODO: Write at least one concrete, non-trivial convention for editing co-located
-      test files (*.test.ts / *.test.tsx). Think about what should layer ON TOP of
-      the React or API rules when the file under test sits in those directories.
-      Examples: assertion-style enforcement, test-data-builder usage, forbidden
-      patterns (snapshots, setTimeout, DB mocking).
--->
+When editing co-located test files (`*.test.ts` / `*.test.tsx`), these rules layer on top of the frontend or API standards:
+
+- **Real database in integration tests:** Repository tests and multi-module integration tests hit a real PostgreSQL test instance (via Docker Compose in CI). Mocking the database layer is forbidden — we've been burned by mocked tests that hid broken migrations. If you're testing repository functions, spin up the test DB.
+- **Component tests assert user behavior, not internal state:** Test rendered output and user-visible outcomes (click → dialog appears). Do not assert on hook state, internal refs, or implementation details — those are fragile and hide refactoring opportunities.
+- **API handler tests call the function directly:** No HTTP fixtures needed. Call the handler with a request shape and assert on the `{ status, body }` return value. This keeps tests fast and deterministic.

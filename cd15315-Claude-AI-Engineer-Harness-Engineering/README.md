@@ -41,6 +41,59 @@ Configure Claude Code for a team working in a multi-surface monorepo: modular `C
 - `03-author-forked-deploy-check-skill/` — A forked `deploy-check` skill.
 - `04-plan-mode-and-explore-decision-doc/` — Plan mode vs. Explore decision doc.
 
+## Capstone: Harness Engineering
+
+The [Capstone Project](Project-Harness%20Engineering%20with%20Claude%20and%20Claude%20Code/) asks you to build, run, and verify all four systems on your own machine, then write an evidence-grounded reflection. This repository includes an **improved evidence structure** designed to align with the actual runnable project folders.
+
+### ⛔ Read First: Tests and Evidence (Two Different Things)
+
+See **[EVIDENCE-VS-TESTS.md](EVIDENCE-VS-TESTS.md)** first to understand the critical distinction.
+
+**Key insight:** Tests passing is a prerequisite. Evidence is run artifacts proving architectural decisions work.
+
+- **Tests passing alone ≠ evidence.** Tests verify code compiles. Artifacts prove the design works.
+- **Must read:** [EVIDENCE-VS-TESTS.md](EVIDENCE-VS-TESTS.md) — explains what counts as actual evidence for each system.
+- **Then read:** [TEST-RIGOR.md](TEST-RIGOR.md) — all tests must pass before you can proceed.
+
+**Test Requirement (Prerequisite):** Any failing test, validator error, or non-zero exit code is a blocker.
+- `21 passed, 9 failed` → STOP. Fix tests.
+- `30 passed, 3 failed` → STOP. Fix tests.
+- `FAIL (2 problems)` → STOP. Fix validator issues.
+
+**Evidence Requirement (Actual Proof):** Run artifacts showing architectural decisions work.
+- System 1: Actual traces showing `stop_reason` routing claims correctly
+- System 2: Actual `budget.json` showing token reduction, actual `eval.jsonl` showing accuracy gains
+- System 3: Actual validator output showing `OK`, `.claude/` structure validated
+- System 4: Actual `hot_state.json` under budget, actual SQL-filtered defects (not full history)
+
+### Evidence Structure Guide
+
+See [EVIDENCE-STRUCTURE.md](EVIDENCE-STRUCTURE.md) for the complete guide. **Key principle:** Your evidence folder mirrors the executable project tree. If the validator checks `.claude/skills/deploy-check/SKILL.md`, your evidence lives in `EVIDENCE/.claude/skills/deploy-check/` with clear references to that path.
+
+**Quick structure:**
+```
+cd15315-Claude-AI-Engineer-Harness-Engineering/
+├── EVIDENCE/                          ← All four systems' evidence
+│   ├── system-1-claims-intake/        ← Mirrors project structure
+│   ├── system-2-retail-context/
+│   ├── system-3-claude-config/        ← Includes .claude/ mirror
+│   ├── system-4-shift-monitor/
+│   └── README.md                      ← Start here
+├── EVIDENCE-STRUCTURE.md              ← Full alignment guide (read first!)
+├── [Four course projects...]
+└── Project-Harness Engineering.../
+```
+
+Each `EVIDENCE/system-N-*/README.md` guides you on exactly what to capture and where to put it. Start with [EVIDENCE-STRUCTURE.md](EVIDENCE-STRUCTURE.md), then follow the per-system README as you run each system.
+
+### Why structure matters
+
+Strong alignment means:
+- **Verifiable:** Evidence paths directly correspond to project file paths
+- **Traceable:** Any evidence file cites the exact line numbers and file names it analyzes
+- **Validator-aligned:** For System 3, your evidence structure validates against the `.claude/` hierarchy you're analyzing
+- **Reflection-ready:** When you fill the reflection brief, you cite evidence like `EVIDENCE/system-3-claude-config/.claude/skills/deploy-check/skill-context-fork.md`, and readers can immediately see the corresponding project file
+
 ## Folder layout
 
 Every exercise pairs starter code with a solution and its own instructions. The exact nesting varies slightly by project:

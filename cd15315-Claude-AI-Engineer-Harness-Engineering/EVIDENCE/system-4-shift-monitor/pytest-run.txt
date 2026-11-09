@@ -1,9 +1,10 @@
 ============================= test session starts ==============================
-platform linux -- Python 3.10.14, pytest-9.2.0, pluggy-1.7.0 -- /usr/bin/python3
+platform linux -- Python 3.10.14, pytest-9.2.0, pluggy-1.7.0 -- /voc/work/cd15315-Claude-AI-Engineer-Harness-Engineering/Build a Multi-Shift Quality Monitoring System with Claude Orchestration/04-fork-scratchpad/starter/venv/bin/python
 cachedir: .pytest_cache
-rootdir: /voc/work/cd15315-Claude-AI-Engineer-Harness-Engineering/Build a Multi-Shift Quality Monitoring System with Claude Orchestration/04-fork-scratchpad/starter
+rootdir: /voc/work/HarnessEngineeringWithClaudeAndClaudeCode-Proj/cd15315-Claude-AI-Engineer-Harness-Engineering/Build a Multi-Shift Quality Monitoring System with Claude Orchestration/04-fork-scratchpad/starter
 configfile: pyproject.toml
-plugins: anyio-4.16.0, langsmith-0.4.27, typeguard-4.3.0, Faker-25.2.0
+testpaths: tests
+plugins: anyio-4.16.0
 collecting ... collected 33 items
 
 tests/test_us01_tiered_state.py::test_hotstate_roundtrip_and_size_budget PASSED [  3%]
@@ -36,19 +37,8 @@ tests/test_us03_crash_recovery.py::test_recovery_decide_empty_manifest_is_fresh 
 tests/test_us03_crash_recovery.py::test_threshold_constant_is_30_minutes PASSED [ 84%]
 tests/test_us03_crash_recovery.py::test_resumed_prompt_has_both_sections PASSED [ 87%]
 tests/test_us04_fork_scratchpad.py::test_scratchpad_append_and_read_order PASSED [ 90%]
-tests/test_us04_fork_scratchpad.py::test_fork_for_hypothesis_copies_state_without_mutating_base FAILED [ 93%]
-tests/test_us04_fork_scratchpad.py::test_two_forks_produce_independent_scratchpads FAILED [ 96%]
-tests/test_us04_fork_scratchpad.py::test_merge_findings_appends_without_rewriting_existing FAILED [100%]
+tests/test_us04_fork_scratchpad.py::test_fork_for_hypothesis_copies_state_without_mutating_base PASSED [ 93%]
+tests/test_us04_fork_scratchpad.py::test_two_forks_produce_independent_scratchpads PASSED [ 96%]
+tests/test_us04_fork_scratchpad.py::test_merge_findings_appends_without_rewriting_existing PASSED [100%]
 
-=================================== FAILURES ===================================
-E   NotImplementedError
-/voc/work/cd15315-Claude-AI-Engineer-Harness-Engineering/Build a Multi-Shift Quality Monitoring System with Claude Orchestration/04-fork-scratchpad/starter/shift_monitor/fork.py:30: NotImplementedError
-E   NotImplementedError
-/voc/work/cd15315-Claude-AI-Engineer-Harness-Engineering/Build a Multi-Shift Quality Monitoring System with Claude Orchestration/04-fork-scratchpad/starter/shift_monitor/fork.py:30: NotImplementedError
-E   NotImplementedError
-/voc/work/cd15315-Claude-AI-Engineer-Harness-Engineering/Build a Multi-Shift Quality Monitoring System with Claude Orchestration/04-fork-scratchpad/starter/shift_monitor/fork.py:42: NotImplementedError
-=========================== short test summary info ============================
-FAILED tests/test_us04_fork_scratchpad.py::test_fork_for_hypothesis_copies_state_without_mutating_base
-FAILED tests/test_us04_fork_scratchpad.py::test_two_forks_produce_independent_scratchpads
-FAILED tests/test_us04_fork_scratchpad.py::test_merge_findings_appends_without_rewriting_existing
-========================= 3 failed, 30 passed in 1.10s =========================
+============================== 33 passed in 1.09s ==============================

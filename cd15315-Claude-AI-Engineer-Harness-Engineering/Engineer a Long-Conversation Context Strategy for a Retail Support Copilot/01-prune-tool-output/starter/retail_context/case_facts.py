@@ -28,7 +28,20 @@ from retail_context.transcript import Transcript
 # refund_status; subscription_id, subscription_plan, subscription_cancel_reason,
 # subscription_status; active_payment_method_last4, new_payment_method_last4,
 # payment_update_failure_code, payment_update_status.
-REQUIRED_FIELDS: tuple[str, ...] = ()
+REQUIRED_FIELDS: tuple[str, ...] = (
+    "customer_id",
+    "refund_order_id",
+    "refund_amount_usd",
+    "refund_status",
+    "subscription_id",
+    "subscription_plan",
+    "subscription_cancel_reason",
+    "subscription_status",
+    "active_payment_method_last4",
+    "new_payment_method_last4",
+    "payment_update_failure_code",
+    "payment_update_status",
+)
 
 
 # TODO (Exercise 2): Replace with a dataclass that carries the 12 fields above
@@ -40,8 +53,29 @@ REQUIRED_FIELDS: tuple[str, ...] = ()
 # fixed key order, bold group labels, reviewer-readable.
 @dataclass
 class CaseFacts:
+    customer_id: str
+    refund_order_id: str
+    refund_amount_usd: float
+    refund_status: str
+    subscription_id: str
+    subscription_plan: str
+    subscription_cancel_reason: str
+    subscription_status: str
+    active_payment_method_last4: str
+    new_payment_method_last4: str
+    payment_update_failure_code: str
+    payment_update_status: str
+
     def to_markdown(self) -> str:
-        raise NotImplementedError("Exercise 2: render the 12-field block as Markdown")
+        return f"""# Case Facts
+
+**Customer:** {self.customer_id}
+
+**Refund:** {self.refund_order_id} | ${self.refund_amount_usd} | {self.refund_status}
+
+**Subscription:** {self.subscription_id} | {self.subscription_plan} | {self.subscription_cancel_reason} | {self.subscription_status}
+
+**Payment Update:** {self.active_payment_method_last4} → {self.new_payment_method_last4} | {self.payment_update_failure_code} | {self.payment_update_status}"""
 
 
 class CaseFactExtractionError(ValueError):

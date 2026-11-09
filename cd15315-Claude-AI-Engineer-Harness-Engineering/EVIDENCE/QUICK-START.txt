@@ -1,0 +1,152 @@
+# EVIDENCE STRUCTURE — QUICK START
+
+## 1. Read These First (5 min total)
+
+  Read this file (you're reading it!)
+  Then read: ../EVIDENCE-STRUCTURE.md
+
+## 2. Pick Your First System
+
+Choose one:
+  → system-1-claims-intake/README.md
+  → system-2-retail-context/README.md
+  → system-3-claude-config/README.md
+  → system-4-shift-monitor/README.md
+
+Each README tells you EXACTLY what to capture and where to put it.
+
+## 3. The Alignment Principle (Important!)
+
+Evidence folder structure mirrors project folder structure.
+
+WRONG ❌
+  EVIDENCE/
+  └── system-3-claude-config/
+      └── skill_deploy_check.md        ← Where in project?
+
+RIGHT ✅
+  EVIDENCE/
+  └── system-3-claude-config/
+      └── .claude/
+          └── skills/
+              └── deploy-check/
+                  └── skill-overview.md   ← Mirrors project path!
+
+## 4. For Each System: Build → Run → Capture
+
+  a) Build the system
+     cd <project>/<exercise>/solution
+     python -m venv .venv && source .venv/bin/activate
+     pip install -e ".[dev]"
+
+  b) Run tests
+     pytest tests/ -v
+     → Save output to: EVIDENCE/system-N-*/pytest-run.txt
+
+  c) Run the system end-to-end
+     (Follow instructions in system README)
+     → Save artifacts to: EVIDENCE/system-N-*/runs/
+
+  d) Analyze the code and artifacts
+     → Write markdown files in: EVIDENCE/system-N-*/<matching-structure>/
+
+## 5. Three Types of Files You'll Create
+
+  TYPE 1: Artifact Captures (raw, unedited)
+    - pytest-run.txt (terminal output)
+    - *.json (actual JSON files)
+    - *.jsonl (trace/event files)
+    Pattern: <run-name>.txt, *.json, *.jsonl
+
+  TYPE 2: Analysis Documents (your interpretation)
+    - *-analysis.md (parse and explain artifacts)
+    - *-overview.md (explain what code does)
+    - README.md (explain tier or layer)
+    Pattern: *-analysis.md, *-overview.md
+
+  TYPE 3: Test Summaries (parsed pytest)
+    - pytest-run-summary.md (test count, failures)
+    - test-*.md (explain what each test module verifies)
+    Pattern: pytest-run-summary.md, test-*.md
+
+## 6. Citation Pattern for Reflection Brief
+
+TEMPLATE:
+  "From EVIDENCE/system-N-*/<path>/<file>.md, [fact]. Quote from project <file.py>:<line>."
+
+EXAMPLE 1 (System 1):
+  "From EVIDENCE/system-1-claims-intake/runs/traces/claim-01-trace.md, the stop_reason
+  sequence is: tool_use, tool_use, end_turn. The loop decision logic is in
+  claims_intake/loop.py:42 where it checks 'if response.stop_reason == end_turn: break'."
+
+EXAMPLE 2 (System 3):
+  "From EVIDENCE/system-3-claude-config/.claude/skills/deploy-check/skill-context-fork.md,
+  the skill has 'context: fork' (SKILL.md line 4). This keeps verbose discovery output
+  isolated from the main session."
+
+## 7. Verification Checklist Before Submitting
+
+  ✅ Evidence paths mirror project paths
+  ✅ All analysis documents quote file names and line numbers
+  ✅ Artifact captures (.json, .jsonl, .txt) are saved unedited
+  ✅ Analysis files (.md) are separate from artifacts
+  ✅ Test evidence documents which test file covers what
+  ✅ Reflection brief citations use EVIDENCE/system-N-*/.../file.md pattern
+  ✅ For System 3: .claude/ structure in evidence mirrors project .claude/
+
+## 8. File Locations
+
+Main guides:
+  - ../README.md                    ← Top-level: Capstone section explains the approach
+  - ../EVIDENCE-STRUCTURE.md        ← Full structure guide (comprehensive)
+  - ../ALIGNMENT-IMPROVEMENTS.md    ← Before/after comparison
+  - ./README.md                     ← This folder: Main evidence overview
+  - ./QUICK-START.txt              ← This file
+
+Per-system guides:
+  - ./system-1-claims-intake/README.md
+  - ./system-2-retail-context/README.md
+  - ./system-3-claude-config/README.md
+  - ./system-4-shift-monitor/README.md
+
+## 9. Example: One Complete System (System 1)
+
+  STEP 1: Read ./system-1-claims-intake/README.md (5 min)
+
+  STEP 2: Build and run
+    cd Build\ a\ Claims\ Intake\ Agent.../exercises/03-dynamic-decomposition/solution
+    python -m venv .venv && source .venv/bin/activate
+    pip install -e ".[dev]"
+    pytest tests/ -v                    → saves to pytest-run.txt
+    python -m claims_intake.run --all   → produces runs/<timestamp>/
+
+  STEP 3: Capture evidence
+    - Copy pytest output → EVIDENCE/system-1-claims-intake/pytest-run.txt
+    - Read claims_intake/loop.py → write EVIDENCE/.../claims_intake/loop.md
+    - Read claims_intake/tools.py → write EVIDENCE/.../claims_intake/tools.md
+    - Copy one trace from runs/ → EVIDENCE/.../runs/traces/claim-01-trace.md
+    - Analyze traces → write EVIDENCE/.../runs/traces/trace-analysis.md
+    - Read tests → write EVIDENCE/.../tests/test-antipatterns.md
+
+  STEP 4: Cite in reflection brief
+    Question: "Quote the stop_reason sequence from one trace"
+    Answer: "From EVIDENCE/system-1-claims-intake/runs/traces/claim-01-trace.md,
+             the sequence is: tool_use, tool_use, end_turn (see loop.py:42)."
+
+## 10. Need Help?
+
+  Confused about structure?
+    → Read ../EVIDENCE-STRUCTURE.md
+
+  Stuck on what to capture for a system?
+    → Read EVIDENCE/system-N-*/README.md for that system
+
+  Don't know how to cite evidence?
+    → See citation examples in each system README
+
+  Want to see before/after?
+    → Read ../ALIGNMENT-IMPROVEMENTS.md
+
+---
+
+That's it! You're ready to start. Pick a system and begin with its README.

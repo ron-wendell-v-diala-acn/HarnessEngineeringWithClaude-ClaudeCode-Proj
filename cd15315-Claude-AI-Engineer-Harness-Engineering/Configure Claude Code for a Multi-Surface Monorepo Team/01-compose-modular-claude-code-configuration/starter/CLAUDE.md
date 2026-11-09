@@ -4,34 +4,22 @@ This file is the **project-level** entry point for the e-commerce monorepo. Ever
 
 ## Scope: what belongs here vs. elsewhere
 
-<!--
-TODO: Add a side-by-side table distinguishing project-level (`./CLAUDE.md`, `.claude/`),
-      user-level (`~/.claude/`), and directory-level (subdir `CLAUDE.md`) scopes. The table
-      MUST explicitly state that user-level settings are NOT shared with teammates via
-      version control, and MUST include one concrete example of content that belongs at
-      user-level (e.g. preferred commit message style).
--->
+| Scope | Purpose | Shared? | Example |
+|-------|---------|---------|---------|
+| **Project-level** (`./CLAUDE.md`, `.claude/`) | Team conventions, shared standards, path-scoped rules | ✅ Via version control | Language choice, async patterns, import rules |
+| **User-level** (`~/.claude/`) | Personal preferences, local development setup | ❌ NOT shared | Preferred commit message template, local path aliases |
+| **Directory-level** (subdir `CLAUDE.md`) | Overrides for specific subdirectories | ✅ Via version control | Special rules for monorepo workspace |
 
-<!-- TODO: Add a short paragraph tying the table back to the team's intent. -->
+This layered approach keeps team conventions visible and version-controlled while allowing individuals to customize their own working environment without affecting teammates.
 
 ## Shared standards (modular via @-imports)
 
 The actual conventions live in focused files so this entry point stays scannable:
 
-<!--
-TODO: Use an `@`-import (a bare `@` followed immediately by the path) to pull in each standards file from .claude/standards/.
-
-The `@`-import directive is a BARE LINE on its own — an `@` immediately followed by the path, with no `import` keyword — e.g.
-
-    @.claude/standards/frontend.md
-
-It is NOT Markdown link syntax like `[name](path)`. That is a common first-attempt
-mistake — Markdown links render but they do not actually import the file's contents
-into the session.
-
-Four standards files already exist for you under `.claude/standards/`:
-frontend.md, api.md, database.md, testing.md. Add one `@`-import line for each.
--->
+@.claude/standards/frontend.md
+@.claude/standards/api.md
+@.claude/standards/database.md
+@.claude/standards/testing.md
 
 Path-scoped rules in [.claude/rules/](.claude/rules/) layer on top of these standards and activate only when Claude is editing matching files (React components, API handlers, test files).
 
@@ -48,13 +36,7 @@ Tests are co-located: `Foo.tsx` lives next to `Foo.test.tsx`.
 
 ## Troubleshooting
 
-<!--
-TODO: Add a one-liner telling teammates that if a CLAUDE.md instruction isn't being
-      followed, they should run the Claude Code command that lists exactly which
-      configuration files actually loaded for the current session.
-
-      (Hint: the command starts with `/m` and is named after Claude's memory.)
--->
+If a CLAUDE.md instruction isn't being followed, run `/memory` to see exactly which configuration files loaded for the current session.
 
 ## Team workflows
 

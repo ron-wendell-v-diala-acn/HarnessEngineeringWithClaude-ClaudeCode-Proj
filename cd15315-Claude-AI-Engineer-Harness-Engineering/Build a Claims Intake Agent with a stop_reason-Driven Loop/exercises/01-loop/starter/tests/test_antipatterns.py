@@ -37,12 +37,17 @@ def test_no_string_membership_against_text_in_loop() -> None:
     for the presence of a magic string inside the model's output — that would be
     natural-language-driven control flow.
     """
-    # TODO:Parse LOOP_PY into an AST. Walk every node. For each
-    # ast.Compare, look at its `ops` — if any op is ast.In AND `node.left` is an
-    # ast.Constant holding a `str`, append `ast.unparse(node)` to an offenders list.
-    # Assert the offenders list is empty; include the offending expressions in the
-    # failure message so a reader can find the bad line.
-    raise NotImplementedError("Exercise 2: write this AST audit")
+    tree = _parse(LOOP_PY)
+    offenders = []
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Compare):
+            # Check if any op is ast.In and left operand is a string constant
+            if any(isinstance(op, ast.In) for op in node.ops):
+                if isinstance(node.left, ast.Constant) and isinstance(node.left.value, str):
+                    offenders.append(ast.unparse(node))
+
+    assert not offenders, f"Found string-membership tests in loop.py: {offenders}"
 
 
 # ---------------------------------------------------------------------------
@@ -55,13 +60,30 @@ def test_no_integer_literal_iteration_cap_in_loop() -> None:
     read their cap from a `Budget` instance (an attribute access or a function
     arg), not from a literal. If you need a cap, pass it in.
     """
-    # TODO:Walk LOOP_PY's AST. Flag:
-    #   - any ast.For whose iter is `range(<int literal>, ...)`
-    #     (ast.Call to a Name "range" with at least one Constant int arg)
-    #   - any ast.While whose test is an ast.Compare with an int Constant on the right
-    # Assert the offenders list is empty. Mention "use a Budget instead" in the failure
-    # message so the reader sees the recommended fix.
-    raise NotImplementedError("Exercise 2: write this AST audit")
+    tree = _parse(LOOP_PY)
+    offenders = []
+
+    for node in ast.walk(tree):
+        # Check for range(<int literal>) in for loops
+        if isinstance(node, ast.For):
+            if isinstance(node.iter, ast.Call):
+                if isinstance(node.iter.func, ast.Name) and node.iter.func.id == "range":
+                    # Check if any argument is an int constant
+                    for arg in node.iter.args:
+                        if isinstance(arg, ast.Constant) and isinstance(arg.value, int):
+                            offenders.append(ast.unparse(node.iter))
+                            break
+
+        # Check for <var> < <int literal> in while loops
+        if isinstance(node, ast.While):
+            if isinstance(node.test, ast.Compare):
+                # Check if right side has an int constant
+                for comparator in node.test.comparators:
+                    if isinstance(comparator, ast.Constant) and isinstance(comparator.value, int):
+                        offenders.append(ast.unparse(node.test))
+                        break
+
+    assert not offenders, f"Found integer-literal iteration caps in loop.py (use a Budget instead): {offenders}"
 
 
 # ---------------------------------------------------------------------------
@@ -69,14 +91,34 @@ def test_no_integer_literal_iteration_cap_in_loop() -> None:
 # ---------------------------------------------------------------------------
 def test_stop_reason_is_loop_control() -> None:
     """loop.py references `stop_reason` AND a `while` loop exits via return/raise on it."""
-    # TODO:Parse LOOP_PY. Walk the tree:
-    #   1. Assert there is at least one reference to `stop_reason` (either as an
-    #      ast.Attribute named `stop_reason` or an ast.Name named `stop_reason`).
-    #   2. Find every ast.While node. For at least one of them, the unparsed body
-    #      must mention BOTH "stop_reason" AND ("return" OR "raise"). That is what
-    #      "the loop exits on stop_reason" looks like at the AST level.
-    # Fail with a clear message if either condition is missing.
-    raise NotImplementedError("Exercise 2: write this AST audit")
+    tree = _parse(LOOP_PY)
+
+    # Check 1: At least one reference to stop_reason
+    stop_reason_found = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Attribute):
+            if node.attr == "stop_reason":
+                stop_reason_found = True
+                break
+        if isinstance(node, ast.Name):
+            if node.id == "stop_reason":
+                stop_reason_found = True
+                break
+
+    assert stop_reason_found, "No reference to 'stop_reason' found in loop.py"
+
+    # Check 2: At least one while loop that references stop_reason and contains return/raise
+    while_loop_ok = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.While):
+            body_text = ast.unparse(node)
+            has_stop_reason = "stop_reason" in body_text
+            has_return_or_raise = "return" in body_text or "raise" in body_text
+            if has_stop_reason and has_return_or_raise:
+                while_loop_ok = True
+                break
+
+    assert while_loop_ok, "No while loop found that exits on stop_reason with return/raise in loop.py"
 
 
 # ---------------------------------------------------------------------------
@@ -88,10 +130,34 @@ def test_no_claim_type_equality_branching_in_package() -> None:
     tools.py is exempt (it defines the enum in input_schema).
     pricing.py is exempt (it may map claim_type to per-queue cost weights).
     """
-    # TODO:Walk every .py file under PKG (recursively). Skip tools.py,
-    # pricing.py, and __init__.py. For each file, parse the AST, find every ast.Compare
-    # whose operators include ast.Eq and whose left operand is a Name/Attribute named
-    # "claim_type" compared against a string Constant. Collect "filename:lineno: <expr>"
-    # for each match. Assert the list is empty; recommend in the failure message that
-    # you move the decision into the model via tool calls.
-    raise NotImplementedError("Exercise 2: write this AST audit")
+    offenders = []
+
+    # Walk every .py file under PKG recursively
+    for py_file in PKG.rglob("*.py"):
+        # Skip exempt files
+        if py_file.name in ("tools.py", "pricing.py", "__init__.py"):
+            continue
+
+        tree = _parse(py_file)
+
+        # Find ast.Compare nodes with ast.Eq comparing claim_type to a string constant
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Compare):
+                if any(isinstance(op, ast.Eq) for op in node.ops):
+                    # Check if left operand is claim_type (Name or Attribute)
+                    left_is_claim_type = False
+                    if isinstance(node.left, ast.Name) and node.left.id == "claim_type":
+                        left_is_claim_type = True
+                    elif isinstance(node.left, ast.Attribute) and node.left.attr == "claim_type":
+                        left_is_claim_type = True
+
+                    # Check if compared against a string constant
+                    if left_is_claim_type:
+                        for comparator in node.comparators:
+                            if isinstance(comparator, ast.Constant) and isinstance(comparator.value, str):
+                                expr = ast.unparse(node)
+                                offenders.append(f"{py_file.name}:{node.lineno}: {expr}")
+
+    assert not offenders, (
+        f"Found claim_type equality branching in package (move decision to model): {offenders}"
+    )
